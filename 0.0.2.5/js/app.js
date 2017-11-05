@@ -1,7 +1,8 @@
 TinyCore.Module.start('models_vidtop');
 
 window.vidtop = {
-    config_key: '2PACX-1vSZbM_FEoeFWBFaEEsOH9DJkGkqwgPLD8kaY6vnwwLfU1iKxpXmUiZGzNMGAJBL1YGbTWODsdg2zoqi'
+    config_key: '2PACX-1vSXSzNQrPeKth2AbdlJhHm_-dbbpblVR6TUsX63BnkSsOAesQjsEuvvQYx-C9sdF4ePvW9LqIrAa4k8'
+//    ,config_key: '2PACX-1vSZbM_FEoeFWBFaEEsOH9DJkGkqwgPLD8kaY6vnwwLfU1iKxpXmUiZGzNMGAJBL1YGbTWODsdg2zoqi'
 }
 vidtop._models = TinyCore.Module.instantiate('models_vidtop');
 vidtop._cache = lru(100);
