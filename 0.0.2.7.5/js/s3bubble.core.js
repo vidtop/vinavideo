@@ -216,7 +216,7 @@ function s3bubbleGlobals() {
     }, helpers.isMobile = function () {
         return helpers.isAndroid() || helpers.isBlackBerry() || helpers.isIOS() || helpers.isOpera() || helpers.isWindows()
     }, helpers.getExternalService = function (url) {
-        if (url.match(/(http:\/\/|https:\/\/|)(player.|www.)?(dailymotion\.com|vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com))\/(video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(\&\S+)?/), RegExp.$3.indexOf("youtu") > -1) type = "youtube";
+        if (url.match(/(http:\/\/|https:\/\/|)(player.|www.)?(dailymotion\.com|vimeo\.com|youtu(be\.com|\.be|be\.googleapis\.com|docs\.google\.com))\/(file\/d\/|video\/|embed\/|watch\?v=|v\/)?([A-Za-z0-9._%-]*)(\&\S+)?/), RegExp.$3.indexOf("youtu") > -1) type = "youtube";
         else if (RegExp.$3.indexOf("vimeo") > -1) type = "vimeo";
         else if (RegExp.$3.indexOf("dailymotion") > -1) var type = "dailymotion";
         return {
@@ -273,7 +273,8 @@ function s3bubble(div) {
                 div && div.children.length > 0 && (console.log("Clean up..."), videojs(div.children[0]).dispose())
             }), options.hasOwnProperty("type") && "audio" === options.type ? s3bubble.audio(options, callback) : s3bubble.video(options, callback);
         else console.log("ERROR: Code is a required option")
-    }, s3bubble.audio = function (options, callback) {
+    },
+        s3bubble.audio = function (options, callback) {
         var settings, video, player;
         if (options.hasOwnProperty("codes"))
             if ("string" == typeof options.codes && (options.codes = [options.codes]), div instanceof Element || (div = document.getElementById(div)), null !== div) {
@@ -472,7 +473,37 @@ function s3bubble(div) {
                             settings.source.type = 'video/youtube';
                             settings.source.src = 'https://www.youtube.com/watch?v=' + settings.options.code;
                             settings.poster = 'https://img.youtube.com/vi/' + settings.options.code + '/maxresdefault.jpg'
-                        } else {
+                        } else if (settings.options.type == "drive") {
+                            var v = document.getElementsByTagName('video')[0];
+                            console.log(v);
+                            if(v) {
+
+                            // videoOptions.techOrder = ["youtube", "vimeo", "dailymotion"];
+                                settings.source.type = 'video/mp4';
+                                settings.source.src = 'data:video/mp4;base64, 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';
+                                var this_iframe = document.createElement("iframe");
+                                this_iframe.setAttribute("id", "video-" + options.post_id);
+                                this_iframe.setAttribute("title", "Vimeo Video Player");
+                                this_iframe.setAttribute("class", "vimeoplayer");
+                                this_iframe.setAttribute("frameborder", "0"),
+                                this_iframe.setAttribute("scrolling", "no"),
+                                this_iframe.setAttribute("marginWidth", "0"),
+                                this_iframe.setAttribute("marginHeight", "0"),
+                                this_iframe.setAttribute("webkitAllowFullScreen", "0"),
+                                this_iframe.setAttribute("mozallowfullscreen", "0"),
+                                this_iframe.setAttribute("allowFullScreen", "0");
+                                this_iframe.setAttribute("src", 'https://docs.google.com/file/d/' + settings.options.code + "/preview?autoplay=1");
+                                this_iframe.setAttribute("width", "100%");
+                                this_iframe.setAttribute("height", "100%");
+                                
+                                // console.log(v);
+                                // console.log(v.parentNode);
+                                setTimeout(function(){v.parentNode.replaceChild(this_iframe, v)},1000);
+//                                <div id="s3bubble-meta-overlay" class="s3bubble-meta-overlay s3bubble-meta-overlay-hidden"><div id="s3bubble-meta-overlay-container" class="s3bubble-meta-overlay-container player-hidden"><a class="s3bubble-meta-overlay-back-to-browse" style="display: block; font-size: 136.071px;"><i class="fa fa-chevron-circle-left" aria-hidden="true"></i></a><h5 style="display: block; font-size: 31.75px;">You're watching</h5><h1 style="display: block; font-size: 76.2px;">Too Good At Goodbyes (Official Video)</h1><p style="display: none; font-size: 34.6364px;"></p></div><div class="s3bubble-meta-overlay-social-share" style="display: block;"><ul class="social"><li><a class="gp" link="https://plus.google.com/share?url=http://localhost:8801/#p/2PACX-1vSYAQRd10CUslpgY63Eg_o1jEhz7AY7Bmz2KVyGHt-2ma5ljjIgiwf4nkLJ8Xv9QP8m1COnWhjgrYI4.2"><i class="fa fa-google"></i></a></li><li><a class="tw" link="https://twitter.com/intent/tweet?url=http://localhost:8801/#p/2PACX-1vSYAQRd10CUslpgY63Eg_o1jEhz7AY7Bmz2KVyGHt-2ma5ljjIgiwf4nkLJ8Xv9QP8m1COnWhjgrYI4.2&amp;amp;text=Too Good At Goodbyes (Official Video)"><i class="fa fa-twitter"></i></a></li><li><a class="fb" link="https://www.facebook.com/sharer/sharer.php?u=http://localhost:8801/#p/2PACX-1vSYAQRd10CUslpgY63Eg_o1jEhz7AY7Bmz2KVyGHt-2ma5ljjIgiwf4nkLJ8Xv9QP8m1COnWhjgrYI4.2&amp;amp;title=Too Good At Goodbyes (Official Video)"><i class="fa fa-facebook"></i></a></li></ul></div></div>
+                            }
+                            // var el = document.getElementById('s3bubble-' + options.post_id);
+                            // return el.parentNode.insertBefore(this_iframe, el);
+                            } else {
                             settings.source.type = settings.options.type;
                             settings.source.src = settings.options.code;
                         }

@@ -19050,9 +19050,11 @@ void 0 === window.HTMLVideoElement && (document.createElement("video"), document
             var result = {
                     videoId: null
                 },
-                regex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/,
+                regex = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|file\/d\/)([^#\&\?]*).*/,
                 match = url.match(regex);
-            match && 11 === match[2].length && (result.videoId = match[2]);
+            console.log(match);
+            match && 11 === match[2].length && (result.videoId = match[2].split('/')[0]);
+            console.log(result);
             var regPlaylist = /[?&]list=([^#\&\?]+)/;
             return (match = url.match(regPlaylist)) && match[1] && (result.listId = match[1]), result
         }, Youtube.apiReadyQueue = [], "undefined" != typeof document && (function(src, callback) {
@@ -19119,20 +19121,48 @@ void 0 === window.HTMLVideoElement && (document.createElement("video"), document
                     this.el_.parentNode.className = this.el_.parentNode.className.replace(" vjs-vimeo", "")
                 },
                 createEl: function() {
-                    this.vimeo = {}, this.vimeoInfo = {}, this.baseUrl = "https://player.vimeo.com/video/", this.baseApiUrl = "http://www.vimeo.com/api/v2/video/", this.videoId = Vimeo.parseUrl(this.options_.source.src).videoId, this.iframe = document.createElement("iframe"), this.iframe.setAttribute("id", this.options_.techId), this.iframe.setAttribute("title", "Vimeo Video Player"), this.iframe.setAttribute("class", "vimeoplayer"), this.iframe.setAttribute("src", this.baseUrl + this.videoId + "?api=1&player_id=" + this.options_.techId), this.iframe.setAttribute("frameborder", "0"), this.iframe.setAttribute("scrolling", "no"), this.iframe.setAttribute("marginWidth", "0"), this.iframe.setAttribute("marginHeight", "0"), this.iframe.setAttribute("webkitAllowFullScreen", "0"), this.iframe.setAttribute("mozallowfullscreen", "0"), this.iframe.setAttribute("allowFullScreen", "0");
+                    this.vimeo = {}, this.vimeoInfo = {},
+                        this.baseUrl = "https://player.vimeo.com/video/",
+                        this.baseUrlGd = "https://docs.google.com/file/d/",
+                        this.baseApiUrl = "http://www.vimeo.com/api/v2/video/",
+                        this.videoId = Vimeo.parseUrl(this.options_.source.src).videoId;
+                        this.iframe = document.createElement("iframe");
+                    this.iframe.setAttribute("id", this.options_.techId);
+                    this.iframe.setAttribute("title", "Vimeo Video Player");
+                    this.iframe.setAttribute("class", "vimeoplayer");
+                    this.iframe.setAttribute("frameborder", "0"),
+                        this.iframe.setAttribute("scrolling", "no"),
+                        this.iframe.setAttribute("marginWidth", "0"),
+                        this.iframe.setAttribute("marginHeight", "0"),
+                        this.iframe.setAttribute("webkitAllowFullScreen", "0"),
+                        this.iframe.setAttribute("mozallowfullscreen", "0"),
+                        this.iframe.setAttribute("allowFullScreen", "0");
+                    if(/^_gd_/.test(this.videoId)) {
+                        this.videoId = this.videoId.split('_gd_')[1];
+                        this.iframe.setAttribute("src", this.baseUrlGd + this.videoId + "/preview");
+                        this.iframe.setAttribute("width", "100%");
+                        this.iframe.setAttribute("height", "100%");
+                    } else {
+
+                        this.iframe.setAttribute("src", this.baseUrl + this.videoId + "?api=1&player_id=" + this.options_.techId);
+                    }
+
                     var divWrapper = document.createElement("div");
                     if (divWrapper.setAttribute("style", "margin:0 auto;padding-bottom:56.25%;width:100%;height:0;position:relative;overflow:hidden;"), divWrapper.setAttribute("class", "vimeoFrame"), divWrapper.appendChild(this.iframe), !_isOnMobile && !this.options_.ytControls) {
                         var divBlocker = document.createElement("div");
                         divBlocker.setAttribute("class", "vjs-iframe-blocker"), divBlocker.setAttribute("style", "position:absolute;top:0;left:0;width:100%;height:100%"), divBlocker.onclick = function() {
-                            this.onPause()
+                            this.onPause();
                         }.bind(this), divWrapper.appendChild(divBlocker)
                     }
+//                    setTimeout(function(){document.getElementById('vjs_video_3_Vimeo_api').scrollIntoView();},5000);
                     return Vimeo.isApiReady ? this.initPlayer() : Vimeo.apiReadyQueue.push(this), divWrapper
                 },
                 initPlayer: function() {
+                    console.log("initPlayer Vimeo");
                     var self = this;
                     Vimeo.parseUrl(this.options_.source.src).videoId;
-                    this.vimeo && this.vimeo.api && (this.vimeo.api("unload"), delete this.vimeo), self.vimeo = $f(self.iframe), self.vimeoInfo = {
+                    this.vimeo && this.vimeo.api && (this.vimeo.api("unload"), delete this.vimeo),
+                        self.vimeo = $f(self.iframe), self.vimeoInfo = {
                         state: VimeoState.UNSTARTED,
                         volume: 1,
                         muted: !1,
@@ -19142,7 +19172,8 @@ void 0 === window.HTMLVideoElement && (document.createElement("video"), document
                         buffered: 0,
                         url: self.baseUrl + self.videoId,
                         error: null
-                    }, this.vimeo.addEvent("ready", function(id) {
+                        }, this.vimeo.addEvent("ready", function(id) {
+                            console.log('ready');
                         self.onReady(), self.vimeo.addEvent("loadProgress", function(data, id) {
                             self.onLoadProgress(data)
                         }), self.vimeo.addEvent("playProgress", function(data, id) {
@@ -19159,6 +19190,7 @@ void 0 === window.HTMLVideoElement && (document.createElement("video"), document
                     })
                 },
                 onReady: function() {
+                     console.log('ready');
                     this.isReady_ = !0, this.triggerReady(), this.trigger("loadedmetadata"), this.startMuted && (this.setMuted(!0), this.startMuted = !1)
                 },
                 onLoadProgress: function(data) {
@@ -19271,8 +19303,9 @@ void 0 === window.HTMLVideoElement && (document.createElement("video"), document
             var result = {
                     videoId: null
                 },
-                regex = /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/,
+                regex = /^.*(vimeo\.com\/|docs.google.com\/file\/d\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([A-z0-9]+)/,
                 match = url.match(regex);
+            console.log(match);
             return match && (result.videoId = match[5]), result
         }, Vimeo.apiReadyQueue = [];
         ! function() {
