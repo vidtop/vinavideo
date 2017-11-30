@@ -21175,7 +21175,7 @@ void 0 === window.HTMLVideoElement && (document.createElement("video"), document
                             var shareLinks = [{
                                     class: "fb",
                                     icon: "fa fa-facebook",
-                                    link: "https://www.facebook.com/sharer/sharer.php?u=" + _location + "&amp;title=" + Title
+                                    link: "https://www.facebook.com/sharer/sharer.php?u=" + _location
                                 }, {
                                     class: "tw",
                                     icon: "fa fa-twitter",
